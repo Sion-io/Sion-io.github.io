@@ -1,0 +1,512 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java框架 | 樱の詩</title><meta name="author" content="冰川里奈"><meta name="copyright" content="冰川里奈"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="spring各种循环依赖的解决？ singletonsCurrentlyInCreation：解决构造方法循环依赖的问题  prototypesCurrentlyInCreation：解决原型循环依赖的问题  Map&lt;String, Object&gt; singletonObjects； Map&lt;String, Object&gt; earlySingletonObjects； Ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java框架">
+<meta property="og:url" content="http://sion-io.github.io/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="樱の詩">
+<meta property="og:description" content="spring各种循环依赖的解决？ singletonsCurrentlyInCreation：解决构造方法循环依赖的问题  prototypesCurrentlyInCreation：解决原型循环依赖的问题  Map&lt;String, Object&gt; singletonObjects； Map&lt;String, Object&gt; earlySingletonObjects； Ma">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sion-io.github.io/img/001.jpg">
+<meta property="article:published_time" content="2024-05-12T08:42:17.413Z">
+<meta property="article:modified_time" content="2024-05-12T10:11:14.810Z">
+<meta property="article:author" content="冰川里奈">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sion-io.github.io/img/001.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://sion-io.github.io/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E6%A1%86%E6%9E%B6/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><link rel="stylesheet" href="/css/index.css?v=4.14.0-b3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.35/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>(()=>{
+      const saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      
+      window.btf = {
+        saveToLocal: saveToLocal,
+        getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = url
+          script.async = true
+          script.onerror = reject
+          script.onload = script.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            script.onload = script.onreadystatechange = null
+            resolve()
+          }
+
+          Object.keys(attr).forEach(key => {
+            script.setAttribute(key, attr[key])
+          })
+
+          document.head.appendChild(script)
+        }),
+
+        getCSS: (url, id = false) => new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = url
+          if (id) link.id = id
+          link.onerror = reject
+          link.onload = link.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            link.onload = link.onreadystatechange = null
+            resolve()
+          }
+          document.head.appendChild(link)
+        }),
+
+        addGlobalFn: (key, fn, name = false, parent = window) => {
+          const pjaxEnable = false
+          if (!pjaxEnable && key.startsWith('pjax')) return
+
+          const globalFn = parent.globalFn || {}
+          const keyObj = globalFn[key] || {}
+    
+          if (name && keyObj[name]) return
+    
+          name = name || Object.keys(keyObj).length
+          keyObj[name] = fn
+          globalFn[key] = keyObj
+          parent.globalFn = globalFn
+        }
+      }
+    
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+      
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })()</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java框架',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-12 18:11:14'
+}</script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="樱の詩" type="application/atom+xml">
+</head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/OIP-C.jpg" data-original="/img/t.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/list/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/list/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-bilibili"></i><span> 追番</span></a></li><li><a class="site-page child" href="/list/CG"><i class="fa-fw fa-solid fa-spray-can"></i><span> CG</span></a></li><li><a class="site-page child" href="/list/order"><i class="fa-fw fa-solid fa-spray-can"></i><span> 指令</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/001.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="樱の詩"><span class="site-name">樱の詩</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/list/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/list/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-bilibili"></i><span> 追番</span></a></li><li><a class="site-page child" href="/list/CG"><i class="fa-fw fa-solid fa-spray-can"></i><span> CG</span></a></li><li><a class="site-page child" href="/list/order"><i class="fa-fw fa-solid fa-spray-can"></i><span> 指令</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java框架</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-12T08:42:17.413Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-12T10:11:14.810Z" title="更新于 2024-05-12 18:11:14">2024-05-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/">面试题</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java框架"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="spring"><a href="#spring" class="headerlink" title="spring"></a>spring</h1><h2 id="各种循环依赖的解决？"><a href="#各种循环依赖的解决？" class="headerlink" title="各种循环依赖的解决？"></a>各种循环依赖的解决？</h2><ol>
+<li><p>singletonsCurrentlyInCreation：解决<strong>构造方法</strong>循环依赖的问题</p>
+</li>
+<li><p>prototypesCurrentlyInCreation：解决<strong>原型循环</strong>依赖的问题</p>
+</li>
+<li><p>Map&lt;String, Object&gt; singletonObjects； Map&lt;String, Object&gt; earlySingletonObjects； Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories：<strong>解决setter和Filed注入</strong>的循环依赖问题</p>
+<ol>
+<li><p>addSingleton  <strong>其中一次</strong>会在getSingleton(String beanName, ObjectFactory&lt;?&gt; singletonFactory) <strong>两个参数</strong>中被调用</p>
+</li>
+<li><p>二级缓存：添加：向里面添加数据只有一个地方，就是上面说的<code>getSingleton(beanName)</code> <strong>一个参数</strong>里从三级缓存里挪过来<br> 移除：<code>addSingleton、addSingletonFactory、removeSingleton</code>从代码中可以看出添加单例、添加单例工厂<code>ObjectFactory</code>的时候都会删除二级缓存里面对应的缓存值，是互斥的</p>
+</li>
+<li><p>addSingletonFactory会在doCreateBean中被调用：<strong>三级缓存中存的是对象的相关的ObjectFactory，如果被代理并且产生了循环依赖，那么就会提前进行aop的织入操作，doCreateBean里面的织入就不用再次进行了</strong></p>
+<ol>
+<li><p>上面实现提前织入的代码为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下面是doCreateBean方法initializeBean里面的</span></span><br><span class="line"><span class="comment">/** bean 初始化后置处理方法 */</span></span><br><span class="line">	<span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">			<span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> getCacheKey(bean.getClass(), beanName);</span><br><span class="line">			<span class="keyword">if</span> (<span class="built_in">this</span>.earlyProxyReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">				<span class="comment">// 如果需要，为 bean 生成代理对象</span></span><br><span class="line">				<span class="keyword">return</span> wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> bean;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 下面是doCreateBean方法里面的</span></span><br><span class="line">addSingletonFactory(beanName, () -&gt; &#123;</span><br><span class="line">				<span class="comment">// 获取早期 bean 的引用，如果 bean 中的方法被 AOP 切点所匹配到，此时 AOP 相关逻辑会介入</span></span><br><span class="line">				<span class="keyword">return</span> getEarlyBeanReference(beanName, mbd, bean); <span class="comment">// 看下面的函数</span></span><br><span class="line">			&#125;);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">protected</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(String beanName, RootBeanDefinition mbd, Object bean)</span> &#123;</span><br><span class="line">		<span class="type">Object</span> <span class="variable">exposedObject</span> <span class="operator">=</span> bean;</span><br><span class="line">		<span class="keyword">if</span> (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) &#123;</span><br><span class="line">			<span class="keyword">for</span> (SmartInstantiationAwareBeanPostProcessor bp : getBeanPostProcessorCache().smartInstantiationAware) &#123;</span><br><span class="line">				exposedObject = bp.getEarlyBeanReference(exposedObject, beanName);<span class="comment">// 看AbstractAutoProxyCreator类，它实现了smartInstantiationAware接口</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> exposedObject;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">// 其中的AbstractAutoProxyCreator.getEarlyBeanReference方法</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(Object bean, String beanName)</span> &#123;</span><br><span class="line">   <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> getCacheKey(bean.getClass(), beanName);</span><br><span class="line">   <span class="built_in">this</span>.earlyProxyReferences.put(cacheKey, bean);</span><br><span class="line">   <span class="keyword">return</span> wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="为什么需要三级缓存？"><a href="#为什么需要三级缓存？" class="headerlink" title="为什么需要三级缓存？"></a>为什么需要三级缓存？</h2><ol>
+<li>为什么需要三级缓存？3级缓存在这里有什么目的呢？<ol>
+<li>3级缓存里面保存的是对象工厂，这个对象工厂内部保留着最原生的对象引用，ObjectFactory的实现类，getObject()方法，它需要考虑一个问题。它到底要返回原生的，还是增强后的。getObject会判断当前这个早期实例 是否需要被增强，如果是，那么提前完成动态代理增强，返回代理对象。否则，返回原生对象。</li>
+</ol>
+</li>
+</ol>
+<h2 id="springioc的步骤？"><a href="#springioc的步骤？" class="headerlink" title="springioc的步骤？"></a>springioc的步骤？</h2><ol>
+<li>getBean-&gt;doGetBean<ol>
+<li>尝试获取缓存</li>
+<li>解决原型依赖</li>
+<li>合并beanDefinition</li>
+<li>解决depend-on依赖</li>
+</ol>
+</li>
+<li>getSingleton<ol>
+<li>beforeSingletonCreation</li>
+<li>afterSingletonCreation</li>
+<li>addSingleton</li>
+</ol>
+</li>
+<li>createBean<ol>
+<li>处理 lookup-method 和 replace-method 配置</li>
+<li>在 bean 初始化前应用后置处理resolveBeforeInstantiation（注意applyBeanPostProcessorsBeforeInstantiation和applyBeanPostProcessorsAfterInitialization的区别，前一个是InstantiationAwareBeanPostProcessor接口的，后一个是BeanPostProcessor接口的）</li>
+</ol>
+</li>
+<li>doGetBean<ol>
+<li>createBeanInstance</li>
+<li>添加到三级缓存</li>
+<li>populateBean</li>
+<li>initializeBean<ol>
+<li>若 bean 实现了 BeanNameAware、BeanFactoryAware、BeanClassLoaderAware 等接口，则向 bean 中注入相关对象</li>
+<li>执行 bean 初始化前置操作</li>
+<li>调用初始化方法invokeInitMethods</li>
+<li>执行 bean 初始化后置操作</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Spring生命周期详细描述"><a href="#Spring生命周期详细描述" class="headerlink" title="Spring生命周期详细描述?"></a>Spring生命周期详细描述?</h2><p><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/spring/Spring%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93?id=_55-spring-%E4%B8%AD%E7%9A%84-bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F">5.5 Spring 中的 bean 生命周期?</a></p>
+<p>这部分网上有很多文章都讲到了，下面的内容整理自：<a target="_blank" rel="noopener" href="https://yemengying.com/2016/07/14/spring-bean-life-cycle/">https://yemengying.com/2016/07/14/spring-bean-life-cycle/</a> ，除了这篇文章，再推荐一篇很不错的文章 ：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zrtqsk/p/3735273.html">https://www.cnblogs.com/zrtqsk/p/3735273.html</a> 。</p>
+<ul>
+<li>Bean 容器找到配置文件中 Spring Bean 的定义。</li>
+<li>Bean 容器利用 Java Reflection API 创建一个Bean的实例。</li>
+<li>如果涉及到一些属性值 利用 <code>set()</code>方法设置一些属性值。</li>
+<li>如果 Bean 实现了 <code>BeanNameAware</code> 接口，调用 <code>setBeanName()</code>方法，传入Bean的名字。</li>
+<li>如果 Bean 实现了 <code>BeanClassLoaderAware</code> 接口，调用 <code>setBeanClassLoader()</code>方法，传入 <code>ClassLoader</code>对象的实例。</li>
+<li>与上面的类似，如果实现了其他 <code>*.Aware</code>接口，就调用相应的方法。</li>
+<li>如果有和加载这个 Bean 的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessBeforeInitialization()</code> 方法</li>
+<li>如果Bean实现了<code>InitializingBean</code>接口，执行<code>afterPropertiesSet()</code>方法。</li>
+<li>如果 Bean 在配置文件中的定义包含  init-method 属性，执行指定的方法。</li>
+<li>如果有和加载这个 Bean的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessAfterInitialization()</code> 方法</li>
+<li>当要销毁 Bean 的时候，如果 Bean 实现了 <code>DisposableBean</code> 接口，执行 <code>destroy()</code> 方法。</li>
+<li>当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。</li>
+</ul>
+<p>图示：</p>
+<p><img src="/img/OIP-C.jpg" data-original="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/48376272.jpg" alt="Spring Bean 生命周期"></p>
+<p>与之比较类似的中文版本:</p>
+<p><img src="/img/OIP-C.jpg" data-original="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/5496407.jpg" alt="Spring Bean 生命周期"></p>
+<h2 id="如何保证Bean的线程安全"><a href="#如何保证Bean的线程安全" class="headerlink" title="如何保证Bean的线程安全?"></a>如何保证Bean的线程安全?</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43727372/article/details/100324678">https://blog.csdn.net/weixin_43727372/article/details/100324678</a></p>
+<ol>
+<li>threadlocal </li>
+<li>使用多例</li>
+<li>设计时避免有状态</li>
+</ol>
+<h2 id="Spring中的AOP是如何实现的，jdk和CGLIB方法的区别"><a href="#Spring中的AOP是如何实现的，jdk和CGLIB方法的区别" class="headerlink" title="Spring中的AOP是如何实现的，jdk和CGLIB方法的区别?"></a>Spring中的AOP是如何实现的，jdk和CGLIB方法的区别?</h2><ol>
+<li>AbstractAdvisorAutoProxyCreator实现了BeanFactoryAware接口，ioc容器为它做了啥？</li>
+<li>AbstractAdvisorAutoProxyCreator作为InstantiationAwareBeanPostProcessor接口做了啥？<ol>
+<li>解析 @Aspect 注解，并构建通知器aspectJAdvisorsBuilder.buildAspectJAdvisors<ol>
+<li>beanType 判断当前 bean 是否是一个的 Aspect 注解类<ol>
+<li>getAdvisorMethods 用于返回不包含 @Pointcut 注解的方法，为每个方法分别调用 getAdvisor 方法</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>createAopProxy<ol>
+<li>获取适合当前方法的拦截器getInterceptorsAndDynamicInterceptionAdvice<ol>
+<li>对于 PointcutAdvisor 类型的通知器，这里要调用通知器所持有的切点（Pointcut）对类和方法进行匹配，匹配成功说明应向当前方法织入通知逻辑</li>
+</ol>
+</li>
+<li>invocation.proceed()执行拦截器链</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="spring怎么实现事务的？"><a href="#spring怎么实现事务的？" class="headerlink" title="spring怎么实现事务的？"></a>spring怎么实现事务的？</h2><p><a target="_blank" rel="noopener" href="https://developer.ibm.com/zh/articles/j-master-spring-transactional-use/">https://developer.ibm.com/zh/articles/j-master-spring-transactional-use/</a></p>
+<ol>
+<li><p>步骤：</p>
+<ol>
+<li><blockquote>
+<ol>
+<li>编程式事务，在代码中硬编码。(不推荐使用)</li>
+<li>声明式事务，在配置文件中配置（推荐使用）</li>
+</ol>
+<p><strong>声明式事务又分为两种：</strong></p>
+<ol>
+<li>基于XML的声明式事务</li>
+<li>基于注解的声明式事务</li>
+</ol>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><p>原理：</p>
+<ol>
+<li>AutoProxyRegistrar的InfrastructureAdvisorAutoProxyCreator 接口做了啥？Infrastructure（基础设施）</li>
+<li>ProxyTransactionManagementConfiguration 做了啥？<ol>
+<li>transactionAttributeSource：解析事务注解，就是获取注解中各种属性的值</li>
+<li>transactionInterceptor：保存了事务属性信息transactionAttributeSource，事务管理器 txManager<ol>
+<li>看看拦截器的invoke方法<ol>
+<li>先获取事务相关的属性  transactionAttributeSource</li>
+<li>再获取PlatformTransactionManager，如果事先没有添加指定任何transactionmanger （在@Transactional注解中可以指定）；最终会从容器中按照类型获取一个PlatformTransactionManager； </li>
+<li>执行目标方法；；如果异常，获取到事务管理器，利用事务管理回滚操作；；如果正常，利用事务管理器，提交事务</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Spring事务失效和解决方案？"><a href="#Spring事务失效和解决方案？" class="headerlink" title="Spring事务失效和解决方案？"></a>Spring事务失效和解决方案？</h2><ol>
+<li>正确的设置 @Transactional 的 propagation 属性<ol>
+<li>TransactionDefinition.PROPAGATION_REQUIRES_NEW： 创建一个新的事务，如果当前存在事务，则把当前事务挂起。</li>
+<li>TransactionDefinition.PROPAGATION_NOT_SUPPORTED： 以非事务方式运行，如果当前存在事务，则把当前事务挂起。</li>
+<li>TransactionDefinition.PROPAGATION_NEVER： 以非事务方式运行，如果当前存在事务，则抛出异常。</li>
+</ol>
+</li>
+<li>正确的设置 @Transactional 的 rollbackFor 属性</li>
+<li>@Transactional 只能应用到 public 方法才有效</li>
+<li>避免 Spring 的 AOP 的自调用问题</li>
+</ol>
+<h2 id="说说IOC和AOP？"><a href="#说说IOC和AOP？" class="headerlink" title="说说IOC和AOP？"></a>说说IOC和AOP？</h2><p>自己的总结：</p>
+<ol>
+<li>IoC（Inverse of Control:控制反转）是一种设计思想，就是 将原本在程序中手动创建对象的控制权，交由Spring框架来管理。在实际项目中一个 Service 类可能有几百甚至上千个类作为它的底层，假如我们需要实例化这个 Service，你可能要每次都要搞清这个  Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IoC  的话，你只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度。</li>
+<li>aop：AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度。Spring AOP就是基于动态代理的，如果要代理的对象，实现了某个接口，那么Spring AOP会使用JDK Proxy，去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候Spring AOP会使用Cglib</li>
+</ol>
+<h4 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/spring/Spring%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93?id=ioc">IoC</a></h4><p>IoC（Inverse of Control:控制反转）是一种<strong>设计思想</strong>，就是 <strong>将原本在程序中手动创建对象的控制权，交由Spring框架来管理。</strong>  IoC 在其他语言中也有应用，并非 Spring 特有。 <strong>IoC 容器是 Spring 用来实现 IoC 的载体，  IoC 容器实际上就是个Map（key，value）,Map 中存放的是各种对象。</strong></p>
+<p>将对象之间的相互依赖关系交给 IoC 容器来管理，并由 IoC 容器完成对象的注入。这样可以很大程度上简化应用的开发，把应用从复杂的依赖关系中解放出来。  <strong>IoC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件&#x2F;注解即可，完全不用考虑对象是如何被创建出来的。</strong> 在实际项目中一个 Service 类可能有几百甚至上千个类作为它的底层，假如我们需要实例化这个 Service，你可能要每次都要搞清这个  Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IoC  的话，你只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度。</p>
+<p>Spring 时代我们一般通过 XML 文件来配置 Bean，后来开发人员觉得 XML 文件来配置不太好，于是 SpringBoot 注解配置就慢慢开始流行起来。</p>
+<p>推荐阅读：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23277575/answer/169698662">https://www.zhihu.com/question/23277575/answer/169698662</a></p>
+<p><strong>Spring IoC的初始化过程：</strong> </p>
+<p><img src="/img/OIP-C.jpg" data-original="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-7/SpringIOC%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B.png" alt="Spring IoC的初始化过程"></p>
+<p>IoC源码阅读</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://javadoop.com/post/spring-ioc">https://javadoop.com/post/spring-ioc</a></li>
+</ul>
+<h4 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/spring/Spring%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%80%BB%E7%BB%93?id=aop">AOP</a></h4><p>AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无关，<strong>却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来</strong>，便于<strong>减少系统的重复代码</strong>，<strong>降低模块间的耦合度</strong>，并<strong>有利于未来的可拓展性和可维护性</strong>。</p>
+<p><strong>Spring AOP就是基于动态代理的</strong>，如果要代理的对象，实现了某个接口，那么Spring AOP会使用<strong>JDK Proxy</strong>，去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候Spring AOP会使用<strong>Cglib</strong> ，这时候Spring AOP会使用 <strong>Cglib</strong> 生成一个被代理对象的子类来作为代理，如下图所示：</p>
+<p><img src="/img/OIP-C.jpg" data-original="https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-6/SpringAOPProcess.jpg" alt="SpringAOPProcess"></p>
+<p>当然你也可以使用 AspectJ ,Spring AOP 已经集成了AspectJ  ，AspectJ  应该算的上是 Java 生态系统中最完整的 AOP 框架了。</p>
+<p>使用 AOP 之后我们可以把一些通用功能抽象出来，在需要用到的地方直接使用即可，这样大大简化了代码量。我们需要增加新功能时也方便，这样也提高了系统扩展性。日志功能、事务管理等等场景都用到了 AOP 。</p>
+<h2 id="Spring-MVC容器的创建过程"><a href="#Spring-MVC容器的创建过程" class="headerlink" title="Spring MVC容器的创建过程"></a>Spring MVC容器的创建过程</h2><ol>
+<li>一般情况下，我们会在一个 Web 应用中配置两个容器。一个容器用于加载 Web 层的类，比如我们的接口  Controller、HandlerMapping、ViewResolver 等。我们把这个容器叫做 web  容器。另一个容器用于加载业务逻辑相关的类，比如 service、dao  层的一些类。我们把这个容器叫做业务容器。在容器初始化的过程中，业务容器会先于 web 容器进行初始化。web  容器初始化时，会将业务容器作为父容器。<ol>
+<li>业务容器的创建入口是 ContextLoaderListener 的 contextInitialized  方法。顾名思义，ContextLoaderListener 是用来监听 ServletContext 加载事件的。当  ServletContext 被加载后，监听器的 contextInitialized 方法就会被 Servlet 容器调用。 流程并不复杂，可简单总结为   创建容器 → 配置并刷新容器 → 设置容器到 ServletContext 中</li>
+<li>业务容器是通过 ContextLoaderListener。那 Web 容器是通过什么创建的呢？答案是通过 DispatcherServlet，HttpServletBean 抽象类时，说过该类覆写了父类 HttpServlet 中的 init 方法。这个方法就是创建 Web 容器的入口。我们并未从上面的源码中发现创建容器的痕迹，我们发现 initServletBean 这个方法稍显奇怪，是个空方法。这个方法的访问级别为 protected，子类可进行覆盖。HttpServletBean 子类 FrameworkServlet 覆写了这个方法<ol>
+<li>从 ServletContext 中获取 ContextLoaderListener 创建的容器</li>
+<li>若 this.webApplicationContext !&#x3D; null 条件成立，仅设置父容器和刷新容器即可</li>
+<li>尝试从 ServletContext 中获取容器，若容器不为空，则无需执行步骤4</li>
+<li>创建容器，并将 rootContext 作为父容器</li>
+<li>设置容器到 ServletContext 中</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="Spring-MVC-的各个相关Servlet类？"><a href="#Spring-MVC-的各个相关Servlet类？" class="headerlink" title="Spring MVC 的各个相关Servlet类？"></a>Spring MVC 的各个相关Servlet类？</h2><p>​	<img src="/img/OIP-C.jpg" data-original="https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15302319955704.jpg" alt="img"></p>
+<ol>
+<li>Http服务器相关，Servlet容器和spring的容器的区别：如果我们基于 Servlet 规范实现 Web 应用的话，HTTP 协议的处理过程就不需要我们参与了。这些工作交给 Servlet 容器就行了，我们只需要关心业务逻辑怎么实现即可</li>
+<li>Servlet 与 ServletConfig：init 方法会在容器启动时由容器调用，也可能会在 Servlet 第一次被使用时调用，调用时机取决 load-on-start  的配置。容器调用 init 方法时，会向其传入一个 ServletConfig 参数。ServletConfig  是什么呢？顾名思义，ServletConfig 是一个和 Servlet 配置相关的接口。举个例子说明一下，我们在配置 Spring MVC 的  DispatcherServlet 时，会通过 ServletConfig 将配置文件的位置告知 DispatcherServlet</li>
+<li>GenericServlet 实现了 Servlet 和 ServletConfig 两个接口，为这两个接口中的部分方法提供了简单的实现。</li>
+<li>一般情况下，我们都是继承 GenericServlet 的子类 HttpServlet，该类是一个和 HTTP 协议相关的 Servlet。该类的关注点在于怎么处理 HTTP 请求，比如其定义了 doGet 方法处理 GET 类型的请求，定义了 doPost 方法处理 POST 类型的请求等。我们若需要基于 Servlet 写 Web 应用，应继承该类，并覆盖指定的方法。</li>
+<li>FrameworkServlet：在HttpServlet中，其对不同方式的请求进行了分发，但是在DispatcherServlet中，由于需要使用同一的方式对不同的请求进行处理，因而其对各个请求方式进行了整合，FrameworkServlet重写了Service() 和 Doget，DoPost，等方法，这些方法会最终调用 DispatcherServlet 的 doService(request, response);–&gt; doDispatch(request, response);  最终所有都到达doDispatch方法</li>
+<li>DispatcherServlet：DispatcherServlet 主要的职责相信大家都比较清楚了，即协调各个组件工作。除此之外，DispatcherServlet 还有一个重要的事情要做，即初始化各种组件，比如 HandlerMapping、HandlerAdapter 等</li>
+</ol>
+<h2 id="Spring-MVC-的接受请求的过程"><a href="#Spring-MVC-的接受请求的过程" class="headerlink" title="Spring MVC 的接受请求的过程"></a>Spring MVC 的接受请求的过程</h2><p><img src="/img/OIP-C.jpg" data-original="https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15300766829012.jpg" alt="img"></p>
+<ol>
+<li>首先，用户的浏览器发出了一个请求，这个请求经过互联网到达了我们的服务器。Servlet  容器首先接待了这个请求，并将该请求委托给 DispatcherServlet 进行处理。</li>
+<li>接着 DispatcherServlet  将该请求传给了处理器映射组件  HandlerMapping，并获取到适合该请求的拦截器和处理器。在获取到处理器后，DispatcherServlet  还不能直接调用处理器的逻辑，需要进行对处理器进行适配。<ol>
+<li>这里getHandler()方法就是通过遍历当前Spring容器中所有定义的HandlerMapping对象，通过调用它们的getHandler()方法，看当前的HandlerMapping能否将当前request映射到某个handler，也就是某个Controller方法上，如果能够映射到，则说明该handler能够处理当前请求</li>
+</ol>
+</li>
+<li>对处理器进行适配，根据获取到的handler，查找当前容器中支持将当前request适配到该handler的HandlerAdapter；<ol>
+<li>MVC中适配器模式解释：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u010288264/article/details/53835185">地址</a>    <a target="_blank" rel="noopener" href="https://blog.csdn.net/a362212624/article/details/80431499">地址2</a></li>
+<li>通过找到的handler，然后在当前Spring容器中找到能够支持将当前request请求适配到找到的handler上的HandlerAdapter。这里需要找到这样的适配器的原因是， 可以看到处理器（宽泛的概念Controller，以及HttpRequestHandler，Servlet，等等）的类型不同，有多重实现方式，那么调用方式就不是确定的，如果需要直接调用Controller方法，需要调用的时候就得不断是使用if else来进行判断是哪一种子类然后执行。那么如果后面要扩展（宽泛的概念Controller，以及HttpRequestHandler，Servlet，等等）Controller，就得修改原来的代码，这样违背了开闭原则（对修改关闭，对扩展开放）</li>
+</ol>
+</li>
+<li>应用容器中所有拦截器的preHandle()方法，只有在所有的preHandle()方法都通过之后才会将当前请求交由具体的handler进行处理；</li>
+<li>DispatcherServlet 通过处理器适配器  HandlerAdapter 调用处理器的逻辑，并获取返回值 ModelAndView。</li>
+<li>应用容器中所有拦截器的postHandle()方法，以对当前请求进行后置处理；</li>
+<li>之后，DispatcherServlet 需要根据  ModelAndView 解析视图。解析视图的工作由 ViewResolver 完成，若能解析成功，ViewResolver  会返回相应的视图对象 View。</li>
+<li>在获取到具体的 View 对象后，最后一步要做的事情就是由 View 渲染视图，并将渲染结果返回给用户。</li>
+</ol>
+<h2 id="Spring用到了哪些设计模式"><a href="#Spring用到了哪些设计模式" class="headerlink" title="Spring用到了哪些设计模式"></a>Spring用到了哪些设计模式</h2><p><a target="_blank" rel="noopener" href="https://snailclimb.gitee.io/javaguide/#/docs/system-design/framework/spring/Spring-Design-Patterns?id=%e6%80%bb%e7%bb%93">地址</a></p>
+<ol>
+<li><p>工厂设计模式 : Spring使用工厂模式通过 <code>BeanFactory</code>、<code>ApplicationContext</code> 创建 bean 对象。</p>
+</li>
+<li><p>代理设计模式 : Spring AOP 功能的实现。</p>
+</li>
+<li><p>单例设计模式 : Spring 中的 Bean 默认都是单例的。</p>
+</li>
+<li><p>适配器模式 :Spring AOP 的增强或通知(Advice)使用到了适配器模式，具体看这个（在每个类型Advice（通知）都有对应的拦截器，MethodBeforeAdviceInterceptor、AfterReturningAdviceInterceptor、ThrowsAdviceInterceptor。</p>
+<p>Spring需要将每个Advice（通知）都封装成对应的拦截器类型，返回给容器，所以需要使用适配器模式对Advice进行转换。）：<a target="_blank" rel="noopener" href="https://blog.csdn.net/adoocoke/article/details/8286902">地址</a>、spring MVC 中也是用到了适配器模式适配<code>Controller</code>。   </p>
+</li>
+<li><p>模板方法模式 : Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。</p>
+</li>
+<li><p>包装器设计模式 : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。</p>
+</li>
+<li><p>观察者模式: Spring 事件驱动模型就是观察者模式很经典的一个应用。</p>
+</li>
+</ol>
+<h2 id="Spring-初始化过程"><a href="#Spring-初始化过程" class="headerlink" title="Spring 初始化过程"></a>Spring 初始化过程</h2><h2 id="SpringBoot核心自动装配原理"><a href="#SpringBoot核心自动装配原理" class="headerlink" title="SpringBoot核心自动装配原理"></a>SpringBoot核心自动装配原理</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/bSY_LdiDs1339lL9zEGl9Q">Guide</a></p>
+<ol>
+<li>什么是SpringBoot自动装配？SpringBoot 在启动时会扫描外部引用 jar 包中的<code>META-INF/spring.factories</code>文件，将文件中配置的类型信息加载到 Spring 容器（此处涉及到 JVM 类加载机制与 Spring 的容器知识），并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</li>
+<li><code>@SpringBootApplication</code>看作是 <code>@Configuration</code>、<code>@EnableAutoConfiguration</code>、<code>@ComponentScan</code> 注解的集合<ol>
+<li><code>@EnableAutoConfiguration</code>：启用 SpringBoot 的自动配置机制</li>
+<li><code>@Configuration</code>：允许在上下文中注册额外的 bean 或导入其他配置类</li>
+<li><code>@ComponentScan</code>：扫描被<code>@Component</code> (<code>@Service</code>,<code>@Controller</code>)注解的 bean，注解默认会扫描启动类所在的包下所有的类 ，可以自定义不扫描某些 bean。如下图所示，容器中将排除<code>TypeExcludeFilter</code>和<code>AutoConfigurationExcludeFilter</code>。</li>
+</ol>
+</li>
+<li>@EnableAutoConfiguration:实现自动装配的核心注解<ol>
+<li><code>EnableAutoConfiguration</code> 只是一个简单地注解，自动装配核心功能的实现实际是通过 <code>AutoConfigurationImportSelector</code>类。<code>AutoConfigurationImportSelector</code> 类实现了 <code>ImportSelector</code>接口，也就实现了这个接口中的 <code>selectImports</code>方法，该方法主要用于获取所有符合条件的类的全限定类名，这些类需要被加载到 IoC 容器中<ol>
+<li>第 1 步：用于获取<code>EnableAutoConfiguration</code>注解中的 <code>exclude</code> 和 <code>excludeName</code></li>
+<li>第 2 步：获取需要自动装配的所有配置类，读取<code>META-INF/spring.factories</code></li>
+<li>第 3 步：<code>@ConditionalOnXXX</code> 中的所有条件都满足，该类才会生效</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>其它：springboot的注解？<ol>
+<li><img src="/img/OIP-C.jpg" data-original="/assets/image-20210322175315063.png" alt="image-20210322175315063"></li>
+</ol>
+</li>
+</ol>
+<h2 id="spring-security-认证流程"><a href="#spring-security-认证流程" class="headerlink" title="spring security 认证流程"></a>spring security 认证流程</h2><p><img src="/img/OIP-C.jpg" data-original="http://bodiegu.lsgdut.fun/20200801190101-898185.png" alt="1595941718976"></p>
+<p>让我们仔细分析认证过程：</p>
+<ol>
+<li>用户提交用户名、密码被SecurityFilterChain中的 UsernamePasswordAuthenticationFilter 过滤器获取到，<br>封装为请求Authentication，通常情况下是UsernamePasswordAuthenticationToken这个实现类。</li>
+<li>然后过滤器将Authentication提交至认证管理器（AuthenticationManager）进行认证</li>
+<li>认证成功后， AuthenticationManager 身份管理器返回一个被填充满了信息的（包括上面提到的权限信息，<br>身份信息，细节信息，但密码通常会被移除） Authentication 实例。</li>
+<li>SecurityContextHolder 安全上下文容器将第3步填充了信息的 Authentication ，通过<br>SecurityContextHolder.getContext().setAuthentication(…)方法，设置到其中。</li>
+<li>可以看出AuthenticationManager接口（认证管理器）是认证相关的核心接口，也是发起认证的出发点，它<br>的实现类为ProviderManager。而Spring Security支持多种认证方式，因此ProviderManager维护着一个<br>List 列表，存放多种认证方式，最终实际的认证工作是由<br>AuthenticationProvider完成的。咱们知道web表单的对应的AuthenticationProvider实现类为AbstractUserDetailsAuthenticationProvider，AbstractUserDetailsAuthenticationProvider的实现类为<br>DaoAuthenticationProvider，它的内部又维护着一个UserDetailsService负责UserDetails的获取。最终<br>AuthenticationProvider将UserDetails填充至Authentication。</li>
+</ol>
+<h2 id="spring-security-授权流程"><a href="#spring-security-授权流程" class="headerlink" title="spring security 授权流程"></a>spring security 授权流程</h2><p>通过快速上手我们知道，Spring Security可以通过 http.authorizeRequests() 对web请求进行授权保护。Spring<br>Security使用标准Filter建立了对web请求的拦截，最终实现对资源的授权访问。Spring Security的授权流程如下：</p>
+<p><img src="/img/OIP-C.jpg" data-original="http://bodiegu.lsgdut.fun/20200729110616-776834.png" alt="1595991975664"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://sion-io.github.io">冰川里奈</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://sion-io.github.io/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E6%A1%86%E6%9E%B6/">http://sion-io.github.io/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E6%A1%86%E6%9E%B6/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://sion-io.github.io" target="_blank">樱の詩</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="/img/001.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" title="设计模式-面试题"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">设计模式-面试题</div></div></a></div><div class="next-post pull-right"><a href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" title="计算机网络-面试题"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">计算机网络-面试题</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/05/11/03-Cookie%E5%92%8CSession/" title="Cookie Session"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Cookie Session</div></div></a></div><div><a href="/2024/05/11/04-%E8%BF%87%E6%BB%A4%E5%99%A8%E5%92%8C%E7%9B%91%E5%90%AC%E5%99%A8/" title="Spring"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Spring</div></div></a></div><div><a href="/2024/05/11/05-Ajax(1)/" title="AJAX"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">AJAX</div></div></a></div><div><a href="/2024/05/11/02-JSP/" title="JSP"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">JSP</div></div></a></div><div><a href="/2024/05/11/Servlet(2)/" title="Servlet"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Servlet</div></div></a></div><div><a href="/2024/05/11/Mybatis(6)/" title="Mybatis"><img class="cover" src="/img/OIP-C.jpg" data-original="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Mybatis</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/OIP-C.jpg" data-original="/img/t.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">冰川里奈</div><div class="author-info__description">因你而在的故事</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Sion-io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spring"><span class="toc-number">1.</span> <span class="toc-text">spring</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E7%A7%8D%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96%E7%9A%84%E8%A7%A3%E5%86%B3%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">各种循环依赖的解决？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%89%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">为什么需要三级缓存？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springioc%E7%9A%84%E6%AD%A5%E9%AA%A4%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">springioc的步骤？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E8%AF%A6%E7%BB%86%E6%8F%8F%E8%BF%B0"><span class="toc-number">1.4.</span> <span class="toc-text">Spring生命周期详细描述?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81Bean%E7%9A%84%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="toc-number">1.5.</span> <span class="toc-text">如何保证Bean的线程安全?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E4%B8%AD%E7%9A%84AOP%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E7%9A%84%EF%BC%8Cjdk%E5%92%8CCGLIB%E6%96%B9%E6%B3%95%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.6.</span> <span class="toc-text">Spring中的AOP是如何实现的，jdk和CGLIB方法的区别?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E7%9A%84%EF%BC%9F"><span class="toc-number">1.7.</span> <span class="toc-text">spring怎么实现事务的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E4%BA%8B%E5%8A%A1%E5%A4%B1%E6%95%88%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9F"><span class="toc-number">1.8.</span> <span class="toc-text">Spring事务失效和解决方案？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%B4%E8%AF%B4IOC%E5%92%8CAOP%EF%BC%9F"><span class="toc-number">1.9.</span> <span class="toc-text">说说IOC和AOP？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#IoC"><span class="toc-number">1.9.0.1.</span> <span class="toc-text">IoC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOP"><span class="toc-number">1.9.0.2.</span> <span class="toc-text">AOP</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC%E5%AE%B9%E5%99%A8%E7%9A%84%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="toc-number">1.10.</span> <span class="toc-text">Spring MVC容器的创建过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC-%E7%9A%84%E5%90%84%E4%B8%AA%E7%9B%B8%E5%85%B3Servlet%E7%B1%BB%EF%BC%9F"><span class="toc-number">1.11.</span> <span class="toc-text">Spring MVC 的各个相关Servlet类？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-MVC-%E7%9A%84%E6%8E%A5%E5%8F%97%E8%AF%B7%E6%B1%82%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">1.12.</span> <span class="toc-text">Spring MVC 的接受请求的过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring%E7%94%A8%E5%88%B0%E4%BA%86%E5%93%AA%E4%BA%9B%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.13.</span> <span class="toc-text">Spring用到了哪些设计模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-%E5%88%9D%E5%A7%8B%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="toc-number">1.14.</span> <span class="toc-text">Spring 初始化过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot%E6%A0%B8%E5%BF%83%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%8E%9F%E7%90%86"><span class="toc-number">1.15.</span> <span class="toc-text">SpringBoot核心自动装配原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring-security-%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B"><span class="toc-number">1.16.</span> <span class="toc-text">spring security 认证流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring-security-%E6%8E%88%E6%9D%83%E6%B5%81%E7%A8%8B"><span class="toc-number">1.17.</span> <span class="toc-text">spring security 授权流程</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/redis/" title="redis-面试题"><img src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/redis/" title="redis-面试题">redis-面试题</a><time datetime="2024-05-12T08:42:17.436Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/jvm/" title="jvm-面试题"><img src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="jvm-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/jvm/" title="jvm-面试题">jvm-面试题</a><time datetime="2024-05-12T08:42:17.432Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/java/" title="Java基础-面试题"><img src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java基础-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/java/" title="Java基础-面试题">Java基础-面试题</a><time datetime="2024-05-12T08:42:17.429Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/hr%E9%9D%A2/" title="无题">无题</a><time datetime="2024-05-12T08:42:17.426Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%A1%B9%E7%9B%AE/" title="项目-面试题"><img src="/img/OIP-C.jpg" data-original="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="项目-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E9%A1%B9%E7%9B%AE/" title="项目-面试题">项目-面试题</a><time datetime="2024-05-12T08:42:17.424Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 冰川里奈</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.14.0-b3"></script><script src="/js/main.js?v=4.14.0-b3"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.35/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = (ele) => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from(ele).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+    
+    codeMermaidEle.forEach(ele => {
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.innerHTML = `<pre class="mermaid-src" hidden>${ele.textContent}</pre>`
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+  
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script>
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script></body></html>
