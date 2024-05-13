@@ -28,7 +28,6 @@ http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/03-Cookie%E5%92%8CSession/
 http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/04-%E8%BF%87%E6%BB%A4%E5%99%A8%E5%92%8C%E7%9B%91%E5%90%AC%E5%99%A8/
 http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/JavaScript/
 http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/05-Ajax(1)/
-http://www.sion-io.cn/list/music/index.html
 http://www.sion-io.cn/tags/index.html
 http://www.sion-io.cn/list/movies/index.html
 http://www.sion-io.cn/about/index.html
@@ -38,7 +37,7 @@ http://www.sion-io.cn/
 http://www.sion-io.cn/tags/Java/
 http://www.sion-io.cn/tags/%E5%89%8D%E7%AB%AF/
 http://www.sion-io.cn/tags/mysql/
-http://www.sion-io.cn/tags/%E7%AE%97%E6%B3%95/
 http://www.sion-io.cn/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/
+http://www.sion-io.cn/tags/%E7%AE%97%E6%B3%95/
 http://www.sion-io.cn/categories/%E7%AC%94%E8%AE%B0/
 http://www.sion-io.cn/categories/%E9%9D%A2%E8%AF%95%E9%A2%98/

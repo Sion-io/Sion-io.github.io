@@ -272,15 +272,6 @@
   </url>
   
   <url>
-    <loc>http://www.sion-io.cn/list/music/index.html</loc>
-    
-    <lastmod>2024-05-12</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.sion-io.cn/tags/index.html</loc>
     
     <lastmod>2024-05-12</lastmod>
@@ -356,14 +347,14 @@
   </url>
   
   <url>
-    <loc>http://www.sion-io.cn/tags/%E7%AE%97%E6%B3%95/</loc>
+    <loc>http://www.sion-io.cn/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
     <lastmod>2024-05-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://www.sion-io.cn/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/</loc>
+    <loc>http://www.sion-io.cn/tags/%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2024-05-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
