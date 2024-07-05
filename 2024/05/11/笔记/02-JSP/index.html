@@ -1,0 +1,367 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>JSP | 樱の詩</title><meta name="author" content="冰川里奈"><meta name="copyright" content="冰川里奈"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="JSP1.JSP简述12345JSP全称是Java Server Pages。本质来说就是一个Servlet、他和Servlet组成在一起是一套J2EE的规范。和HTML的区别就是:HTML是纯静态的。不能包含Java代码。无法动态的加载，修改，删除数据Servlet：通过响应对象可以给空白页写入html元素，但是开发效率低JSP:支持HTML的标签，同时具备Servlet的动态输出功能。 可以理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSP">
+<meta property="og:url" content="http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/02-JSP/index.html">
+<meta property="og:site_name" content="樱の詩">
+<meta property="og:description" content="JSP1.JSP简述12345JSP全称是Java Server Pages。本质来说就是一个Servlet、他和Servlet组成在一起是一套J2EE的规范。和HTML的区别就是:HTML是纯静态的。不能包含Java代码。无法动态的加载，修改，删除数据Servlet：通过响应对象可以给空白页写入html元素，但是开发效率低JSP:支持HTML的标签，同时具备Servlet的动态输出功能。 可以理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.sion-io.cn/img/001.jpg">
+<meta property="article:published_time" content="2024-05-11T06:56:01.000Z">
+<meta property="article:modified_time" content="2024-05-12T08:19:51.095Z">
+<meta property="article:author" content="冰川里奈">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.sion-io.cn/img/001.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/02-JSP/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><meta/><link rel="stylesheet" href="/css/index.css?v=4.14.0-b3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.35/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>(()=>{
+      const saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+      
+      window.btf = {
+        saveToLocal: saveToLocal,
+        getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = url
+          script.async = true
+          script.onerror = reject
+          script.onload = script.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            script.onload = script.onreadystatechange = null
+            resolve()
+          }
+
+          Object.keys(attr).forEach(key => {
+            script.setAttribute(key, attr[key])
+          })
+
+          document.head.appendChild(script)
+        }),
+
+        getCSS: (url, id = false) => new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+          link.rel = 'stylesheet'
+          link.href = url
+          if (id) link.id = id
+          link.onerror = reject
+          link.onload = link.onreadystatechange = function() {
+            const loadState = this.readyState
+            if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+            link.onload = link.onreadystatechange = null
+            resolve()
+          }
+          document.head.appendChild(link)
+        }),
+
+        addGlobalFn: (key, fn, name = false, parent = window) => {
+          const pjaxEnable = true
+          if (!pjaxEnable && key.startsWith('pjax')) return
+
+          const globalFn = parent.globalFn || {}
+          const keyObj = globalFn[key] || {}
+    
+          if (name && keyObj[name]) return
+    
+          name = name || Object.keys(keyObj).length
+          keyObj[name] = fn
+          globalFn[key] = keyObj
+          parent.globalFn = globalFn
+        }
+      }
+    
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+      
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })()</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":true,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JSP',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-05-12 16:19:51'
+}</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const loadMeting = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'loadMeting')
+})()</script><link rel="stylesheet" href="APlayer.min.css"><div id="aplayer"></div><script src="https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js" async></script><meta name="generator" content="Hexo 7.2.0"><link rel="alternate" href="/atom.xml" title="樱の詩" type="application/atom+xml">
+</head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+btf.addGlobalFn('pjaxSend', () => {
+  Pace.restart()
+}, 'pace_restart')
+
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/t.jpeg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/list/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-bilibili"></i><span> 追番</span></a></li><li><a class="site-page child" href="/bili/"><i class="fa-fw fa-solid fa-spray-can"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/list/CG"><i class="fa-fw fa-solid fa-spray-can"></i><span> CG</span></a></li><li><a class="site-page child" href="/list/order"><i class="fa-fw fa-solid fa-spray-can"></i><span> 指令</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/001.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="樱の詩"><span class="site-name">樱の詩</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><span class="site-page group"><i class="fa-fw fas fa-list"></i><span> List</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/list/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li><li><a class="site-page child" href="/bangumis/"><i class="fa-fw fa-brands fa-bilibili"></i><span> 追番</span></a></li><li><a class="site-page child" href="/bili/"><i class="fa-fw fa-solid fa-spray-can"></i><span> 番剧</span></a></li><li><a class="site-page child" href="/list/CG"><i class="fa-fw fa-solid fa-spray-can"></i><span> CG</span></a></li><li><a class="site-page child" href="/list/order"><i class="fa-fw fa-solid fa-spray-can"></i><span> 指令</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">JSP</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-05-11T06:56:01.000Z" title="发表于 2024-05-11 14:56:01">2024-05-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-05-12T08:19:51.095Z" title="更新于 2024-05-12 16:19:51">2024-05-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AC%94%E8%AE%B0/">笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="JSP"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><link rel="stylesheet" class="aplayer-secondary-style-marker" href="\css\APlayer.min.css"><script src="\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="\js\Meting.min.js"></script><h1 id="JSP"><a href="#JSP" class="headerlink" title="JSP"></a>JSP</h1><h2 id="1-JSP简述"><a href="#1-JSP简述" class="headerlink" title="1.JSP简述"></a>1.JSP简述</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">JSP全称是Java Server Pages。本质来说就是一个Servlet、他和Servlet组成在一起是一套J2EE的规范。</span><br><span class="line">和HTML的区别就是:</span><br><span class="line">HTML是纯静态的。不能包含Java代码。无法动态的加载，修改，删除数据</span><br><span class="line">Servlet：通过响应对象可以给空白页写入html元素，但是开发效率低</span><br><span class="line">JSP:支持HTML的标签，同时具备Servlet的动态输出功能。 可以理解为HTML+Servlet</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-入门程序"><a href="#2-入门程序" class="headerlink" title="2.入门程序"></a>2.入门程序</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.在maven项目中添加web模块</span><br><span class="line">2.webapp目录中创建jsp页面</span><br><span class="line">3.编写页面</span><br><span class="line">4.运行测试</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Jsp运行原理"><a href="#3-Jsp运行原理" class="headerlink" title="3.Jsp运行原理"></a>3.Jsp运行原理</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端发送请求到服务器，tomcat服务器解析请求并且处理请求，然后转发到指定的JSP页面。Tomcat会将JSP页面转换成Servlet的Java文件，JVM将.java文件编译成.class文件，响应执行.class文件</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-JSP应用"><a href="#4-JSP应用" class="headerlink" title="4.JSP应用"></a>4.JSP应用</h2><h3 id="4-1JSP语法"><a href="#4-1JSP语法" class="headerlink" title="4.1JSP语法"></a>4.1JSP语法</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">1.Java代码块</span><br><span class="line">语法:&lt;%Java代码块%&gt;</span><br><span class="line">案例:</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;%</span><br><span class="line">		String str = &quot;messsage&quot;;</span><br><span class="line">		System.out.println(str)</span><br><span class="line">	%&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">注意：在实际开发中不使用此种方式开发Java代码。因为里面的内容都是Tomcat负责编译，编译之后会成为Servlet的成员变量。只会给tomcat增加额外的负担。</span><br><span class="line"></span><br><span class="line">2.JSP表达式</span><br><span class="line">语法：&lt;%= %&gt; (实际开发中也不使用)</span><br><span class="line">案例:&lt;%=1+6==7 %&gt;</span><br><span class="line">表达式的内容最后是由out.println(&quot;表达式&quot;)</span><br><span class="line"></span><br><span class="line">3.JSP声明:在JSP页面中声明一些Java变量，方法，静态方法等</span><br><span class="line">语法：&lt;%! %&gt; (实际开发中也不使用)</span><br><span class="line">案例:</span><br><span class="line">&lt;%! </span><br><span class="line">	public void method01()&#123;</span><br><span class="line">        System.out.println(&quot;这是JSP的声明方法&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    method01();</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-JSP指令-3"><a href="#4-2-JSP指令-3" class="headerlink" title="4.2 JSP指令(3)"></a>4.2 JSP指令(3)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">指令必须使用&lt;%@ %&gt;</span><br><span class="line">1.page指令</span><br><span class="line">简介:创建一个jsp页面后默认就存在了page指令</span><br><span class="line">page执行的属性和作用:</span><br><span class="line">contentType:告知引擎，响应正文使用的mime类型</span><br><span class="line">language：告知引擎，脚本使用的语言，默认是Java，不写不行。</span><br><span class="line">extends：告知引擎，当前jsp对应的servlet的父类是谁。不需要则不编写</span><br><span class="line">import：告知引擎引入相关依赖(.jar)</span><br><span class="line">注意:JSP在默认情况下也导入以下几个包。java.lang.*;javax.servlet.*;javax.servlet.http.*;javax.servlet.*javax.servlet.jsp.*</span><br><span class="line">session:告知引擎是否产生httpSession对象，默认为true。</span><br><span class="line">buffer：告知引擎设置缓存大小。默认为8kb；</span><br><span class="line">errorPage：告知引擎页面发生异常后转发到那个页面。一般在开发中使用web.xml中配置全局错误页面取代它</span><br><span class="line">isErrorPage：告知引擎是否捕获异常。默认值为false。如果设置为true，那么页面中就可以使用exception对象(隐式对象)</span><br><span class="line">isELIgnored:告知引擎是否忽略EL表达式。默认为false。一般也不会更改</span><br><span class="line">pageEncoding：告知引擎编译JSP的时候使用的编码格式</span><br><span class="line"></span><br><span class="line">2.include指令</span><br><span class="line">语法:&lt;%@ file=&quot;&quot; %&gt;</span><br><span class="line">作用：该指令用于包含外部页面(静态包含)</span><br><span class="line">引用场景:一个网站包含很多页面，这些页面一般都有公共的头和尾。所以一般把头尾做成两个页面，其他页面引用这两个头尾页面</span><br><span class="line">案例:</span><br><span class="line">&lt;%@ includ file = &quot;head.jsp&quot;%&gt;</span><br><span class="line"></span><br><span class="line">3.taglib指令</span><br><span class="line">语法:&lt;%@ taglib prefix=&quot;&quot; uri=&quot;&quot; %&gt;</span><br><span class="line">作用:引入外部的标签库。jsp页面中默认就引入了html和jsp的标签库</span><br><span class="line">属性:</span><br><span class="line">uri:外部标签的地址</span><br><span class="line">prefix:使用外部标签库的前缀</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-JSP动作-6"><a href="#4-3-JSP动作-6" class="headerlink" title="4.3 JSP动作(6)"></a>4.3 JSP动作(6)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">1.jsp:include(动态包含)</span><br><span class="line">语法:&lt;jsp:include page=&quot;地址&quot;&gt;</span><br><span class="line">案例：&lt;jsp:include page = &quot;head.jsp&quot;&gt;&lt;/jsp:include&gt;</span><br><span class="line">动态包含和静态包含的区别:</span><br><span class="line">最终的结果和目的是一样的。</span><br><span class="line">主要区别是静态包含(指令)是把两个页面合成一个页面，也就是说编译后只产生一个.java文件(先包含再编译)</span><br><span class="line">动态包含是将两个页面分别进行编译，包含者和被包含者属于调用关系(先编译再调用)</span><br><span class="line"></span><br><span class="line">2.jsp:useBean;jsp:setProperty;getProperty </span><br><span class="line">&lt;%--等价于 Student stu = new Student()--%&gt;</span><br><span class="line">&lt;jsp:useBean id=&quot;stu&quot; class=&quot;com.lxk.pojo.Student&quot;&gt;&lt;/jsp:useBean&gt;</span><br><span class="line">&lt;%-- 等价于 stu.setStudentName(&quot;张雨薇&quot;)--%&gt;</span><br><span class="line">&lt;jsp:setProperty name=&quot;stu&quot; property=&quot;studentName&quot; value=&quot;张雨薇&quot;&gt;&lt;/jsp:setProperty&gt; </span><br><span class="line">&lt;%--等价于 stu.getStudentName() 直接把结果输出带页面上--%&gt;</span><br><span class="line">&lt;jsp:getProperty name=&quot;stu&quot; property=&quot;studentName&quot;/&gt;</span><br><span class="line"></span><br><span class="line">3.jsp:forward；jsp:param</span><br><span class="line">&lt;jsp:forward page=&quot;adduser.jsp&quot;&gt;</span><br><span class="line">    &lt;jsp:param name=&quot;userId&quot; value=&quot;123&quot;/&gt;</span><br><span class="line">&lt;/jsp:forward&gt;</span><br><span class="line">--------获取参数</span><br><span class="line">&lt;%= request.getParameter(&quot;userId&quot;)%&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-4-JSP隐式对象-9"><a href="#4-4-JSP隐式对象-9" class="headerlink" title="4.4 JSP隐式对象(9)"></a>4.4 JSP隐式对象(9)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">JSP的隐式对象就是JSP的内置对象，是JSP事先创建好的对象，不需要new就可以直接使用。</span><br><span class="line">注意:在任何JSP页面中都可以使用，但是只能在表达式和脚本中使用</span><br><span class="line"></span><br><span class="line">分类:</span><br><span class="line">输入输出对象:request，response，out</span><br><span class="line">作用域:session，application，pageContext</span><br><span class="line">servlet对象:page,config</span><br><span class="line">错误对象:exception</span><br><span class="line"></span><br><span class="line">输入输出对象:</span><br><span class="line">request，response和Servlet中的是同一个对象</span><br><span class="line">out:主要用于页面内容的输出，一般不使用。一般使用EL和JSTL</span><br><span class="line"></span><br><span class="line">作用域对象和Servlet的四大作用域一样；</span><br><span class="line"></span><br><span class="line">servlet对象：</span><br><span class="line">page:page对象指的是当前页面本身，有点类似于Java中的this</span><br><span class="line">config：作用就是当前JSP转成servlet之后的配置信息。等价于servlet中的ServletConfig</span><br><span class="line"></span><br><span class="line">错误对象:</span><br><span class="line">使用前提是page指令中开启异常捕获。</span><br><span class="line">开发不使用，错误统一配置</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-EL表达式"><a href="#5-EL表达式" class="headerlink" title="5.EL表达式"></a>5.EL表达式</h2><h3 id="5-1-EL表达式简介"><a href="#5-1-EL表达式简介" class="headerlink" title="5.1 EL表达式简介"></a>5.1 EL表达式简介</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">EL表达式是JSP/Servlet规范中的一部分。主要作用是JSP中获取数据(使用EL表达式取代JSP表达式)从而达到JSP脱离Java代码块和Java表达式</span><br><span class="line"></span><br><span class="line">语法:$&#123;表达式&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-基本应用"><a href="#5-2-基本应用" class="headerlink" title="5.2 基本应用"></a>5.2 基本应用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException &#123;</span><br><span class="line">        //存储一个String</span><br><span class="line">        req.setAttribute(&quot;name&quot;,&quot;张雨薇&quot;);</span><br><span class="line">        //存储一个引用数据类型</span><br><span class="line">        Student student = new Student();</span><br><span class="line">        student.setStudentId(1);</span><br><span class="line">        student.setStudentName(&quot;张三&quot;);</span><br><span class="line">        req.setAttribute(&quot;student&quot;,student);</span><br><span class="line">        //集合类型</span><br><span class="line">        ArrayList&lt;Student&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">        Student student2 = new Student();</span><br><span class="line">        student2.setStudentId(2);</span><br><span class="line">        student2.setStudentName(&quot;王凤荣&quot;);</span><br><span class="line">        Student student3 = new Student();</span><br><span class="line">        student3.setStudentId(3);</span><br><span class="line">        student3.setStudentName(&quot;麻子&quot;);</span><br><span class="line">        list.add(student2);</span><br><span class="line">        list.add(student3);</span><br><span class="line">        req.setAttribute(&quot;list&quot;,list);</span><br><span class="line">        //map类型</span><br><span class="line">        HashMap&lt;String, Student&gt; map = new HashMap&lt;&gt;();</span><br><span class="line">        Student student4 = new Student();</span><br><span class="line">        student4.setStudentId(4);</span><br><span class="line">        student4.setStudentName(&quot;遛虞波狗东西&quot;);</span><br><span class="line">        student4.setStudentGender(&quot;不好说&quot;);</span><br><span class="line">        map.put(student4.getStudentName(),student4);</span><br><span class="line">        req.setAttribute(&quot;map&quot;,map);</span><br><span class="line">        req.getRequestDispatcher(&quot;/jsp/eltest.jsp&quot;).forward(req,resp);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">获取String类型的数据</span><br><span class="line">$&#123;name&#125;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">获取student对象的数据</span><br><span class="line">$&#123;student&#125;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">获取student对象中的属性的数据</span><br><span class="line">$&#123;student.studentId&#125;</span><br><span class="line">$&#123;student.studentName&#125;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">获取集合中的数据</span><br><span class="line">$&#123;list[0].studentId&#125;</span><br><span class="line">$&#123;list[0].studentName&#125;</span><br><span class="line">&lt;hr&gt;</span><br><span class="line">获取map中的数据</span><br><span class="line">$&#123;map.key.studentGender&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-EL表达式运算符"><a href="#5-3-EL表达式运算符" class="headerlink" title="5.3 EL表达式运算符"></a>5.3 EL表达式运算符</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">性别:&lt;input type=&quot;radio&quot; value = &quot;男&quot; name=&quot;gender&quot; $&#123;student.gender==&quot;男&quot;?&quot;checked&quot;:&quot;&quot;&#125;&gt;男</span><br><span class="line">	&lt;input type=&quot;radio&quot; value = &quot;女&quot; name=&quot;gender&quot; $&#123;student.gender==&quot;女&quot;?&quot;checked&quot;:&quot;&quot;&#125;&gt;女</span><br></pre></td></tr></table></figure>
+
+<h2 id="6-JSTL表达式"><a href="#6-JSTL表达式" class="headerlink" title="6.JSTL表达式"></a>6.JSTL表达式</h2><h3 id="6-1-JSTL简介"><a href="#6-1-JSTL简介" class="headerlink" title="6.1 JSTL简介"></a>6.1 JSTL简介</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">它是服务于JSP技术的一个第三方标签库。右apache实现的。主要是用于在JSP页面中的逻辑处理。</span><br><span class="line">JSTL标签库由五部分组成:Core,fmt,Funcations,SQL,XML。一般只使用Core。</span><br><span class="line">Core:核心标签库。只要用于逻辑处理</span><br><span class="line">Fmt:实现国际化</span><br><span class="line">Funcations：EL函数库。里面主要提供了EL表达式可以使用的方法</span><br><span class="line">SQL:用于操作数据源</span><br><span class="line">XML：操作XML</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-JSTL使用"><a href="#6-2-JSTL使用" class="headerlink" title="6.2 JSTL使用"></a>6.2 JSTL使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">1.引入依赖</span><br><span class="line">2.在jsp中使用指令引入标签库</span><br><span class="line">3.使用</span><br><span class="line">3.1 遍历</span><br><span class="line">标签名:c:forEach</span><br><span class="line">属性:</span><br><span class="line">item：需要遍历的集合。此处使用EL表达式获取作用域中的数据</span><br><span class="line">var：把当前遍历的元素放入到page作用域中，var的属性的值作为page作用域中的key，当前的遍历的元素作为value</span><br><span class="line">begin：开始遍历的索引</span><br><span class="line">end：结束遍历的索引</span><br><span class="line">step：每次遍历的步长</span><br><span class="line">varStatus：它是计数器对象，记录索引和数据个数</span><br><span class="line">案例:</span><br><span class="line">    &lt;c:forEach items=&quot;$&#123;list&#125;&quot; var=&quot;student&quot;&gt;</span><br><span class="line">        $&#123;student.studentId&#125;</span><br><span class="line">        $&#123;student.studentName&#125;</span><br><span class="line">    &lt;/c:forEach&gt;</span><br><span class="line">    &lt;hr&gt;</span><br><span class="line">    &lt;c:forEach begin=&quot;1&quot; end=&quot;$&#123;pageNum&#125;&quot; step=&quot;1&quot; var=&quot;i&quot;&gt;</span><br><span class="line">        &lt;a href=&quot;#&quot;&gt;$&#123;i&#125;&lt;/a&gt;</span><br><span class="line">    &lt;/c:forEach&gt;</span><br><span class="line">    </span><br><span class="line">3.2 判断</span><br><span class="line">标签名:c:if</span><br><span class="line">属性:</span><br><span class="line">test:表达式返回的结果决定当前JSTL标签内的代码是否执行</span><br><span class="line">案例：</span><br><span class="line">&lt;c:if test=&quot;$&#123;student.age&gt;18&#125;&quot;&gt;</span><br><span class="line">	&lt;span&gt;成年1&lt;/span&gt;</span><br><span class="line">&lt;/c:if&gt;</span><br><span class="line">&lt;c:if test=&quot;$&#123;student.age&gt;20&#125;&quot;&gt;</span><br><span class="line">	&lt;span&gt;成年2&lt;/span&gt;</span><br><span class="line">&lt;/c:if&gt;</span><br><span class="line"></span><br><span class="line">&lt;c:choose&gt;</span><br><span class="line">    &lt;c:when test=&quot;$&#123;student.age&lt;18&#125;&quot;&gt;&lt;/c:when&gt;</span><br><span class="line">    &lt;c:when test=&quot;$&#123;student.age&lt;18&#125;&quot;&gt;&lt;/c:when&gt;</span><br><span class="line">    &lt;c:when test=&quot;$&#123;student.age&lt;18&#125;&quot;&gt;&lt;/c:when&gt;</span><br><span class="line">&lt;/c:choose&gt;</span><br><span class="line"></span><br><span class="line">3.2 存储</span><br><span class="line">标签名:c:set</span><br><span class="line">属性:</span><br><span class="line">var:key</span><br><span class="line">value:value</span><br><span class="line">scope:作用域</span><br><span class="line">案例：</span><br><span class="line">&lt;c:set var=&quot;ctx&quot; value=&quot;$&#123;pageContext.request.contextPath&#125;&quot;&gt;&lt;/c:set&gt;</span><br><span class="line">&lt;c:out value=&quot;$&#123;ctx&#125;&quot;&gt;&lt;/c:out&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://www.sion-io.cn">冰川里奈</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/02-JSP/">http://www.sion-io.cn/2024/05/11/%E7%AC%94%E8%AE%B0/02-JSP/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://www.sion-io.cn" target="_blank">樱の詩</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a></div><div class="post_share"><div class="social-share" data-image="/img/001.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98/" title="微服务-面试题"><img class="cover" src="/img/001.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">微服务-面试题</div></div></a></div><div class="next-post pull-right"><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/03-Cookie%E5%92%8CSession/" title="Cookie Session"><img class="cover" src="/img/001.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Cookie Session</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/03-Cookie%E5%92%8CSession/" title="Cookie Session"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Cookie Session</div></div></a></div><div><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/04-%E8%BF%87%E6%BB%A4%E5%99%A8%E5%92%8C%E7%9B%91%E5%90%AC%E5%99%A8/" title="Spring"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Spring</div></div></a></div><div><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/05-Ajax(1)/" title="AJAX"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">AJAX</div></div></a></div><div><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/Servlet(2)/" title="Servlet"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Servlet</div></div></a></div><div><a href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/java/" title="Java基础-面试题"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-12</div><div class="title">Java基础-面试题</div></div></a></div><div><a href="/2024/05/11/%E7%AC%94%E8%AE%B0/Spring(3)/" title="Spring"><img class="cover" src="/img/001.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-05-11</div><div class="title">Spring</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/t.jpeg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">冰川里奈</div><div class="author-info__description">１２３</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Sion-io"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">因你而在的故事 <img src="/img/ly.png"></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#JSP"><span class="toc-number">1.</span> <span class="toc-text">JSP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-JSP%E7%AE%80%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">1.JSP简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%85%A5%E9%97%A8%E7%A8%8B%E5%BA%8F"><span class="toc-number">1.2.</span> <span class="toc-text">2.入门程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Jsp%E8%BF%90%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.</span> <span class="toc-text">3.Jsp运行原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-JSP%E5%BA%94%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">4.JSP应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1JSP%E8%AF%AD%E6%B3%95"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1JSP语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-JSP%E6%8C%87%E4%BB%A4-3"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 JSP指令(3)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-JSP%E5%8A%A8%E4%BD%9C-6"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 JSP动作(6)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-JSP%E9%9A%90%E5%BC%8F%E5%AF%B9%E8%B1%A1-9"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 JSP隐式对象(9)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-EL%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.5.</span> <span class="toc-text">5.EL表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 EL表达式简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%9F%BA%E6%9C%AC%E5%BA%94%E7%94%A8"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 基本应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-EL%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 EL表达式运算符</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-JSTL%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">6.JSTL表达式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-JSTL%E7%AE%80%E4%BB%8B"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 JSTL简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-JSTL%E4%BD%BF%E7%94%A8"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 JSTL使用</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/05/13/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E2%9D%A4/" title="❤"><img src="/img/002.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="❤"/></a><div class="content"><a class="title" href="/2024/05/13/%E6%96%B0%E7%9A%84%E5%BC%80%E5%A7%8B%E2%9D%A4/" title="❤">❤</a><time datetime="2024-05-13T00:30:25.401Z" title="发表于 2024-05-13 08:30:25">2024-05-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/redis/" title="redis-面试题"><img src="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/redis/" title="redis-面试题">redis-面试题</a><time datetime="2024-05-12T08:42:17.436Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/jvm/" title="jvm-面试题"><img src="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="jvm-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/jvm/" title="jvm-面试题">jvm-面试题</a><time datetime="2024-05-12T08:42:17.432Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/java/" title="Java基础-面试题"><img src="/img/001.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java基础-面试题"/></a><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/java/" title="Java基础-面试题">Java基础-面试题</a><time datetime="2024-05-12T08:42:17.429Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2024/05/12/%E9%9D%A2%E8%AF%95%E9%A2%98/hr%E9%9D%A2/" title="无题">无题</a><time datetime="2024-05-12T08:42:17.426Z" title="发表于 2024-05-12 16:42:17">2024-05-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By 冰川里奈</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.14.0-b3"></script><script src="/js/main.js?v=4.14.0-b3"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.35/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"><script>(() => {
+  const runMermaid = (ele) => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    Array.from(ele).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+    
+    codeMermaidEle.forEach(ele => {
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.innerHTML = `<pre class="mermaid-src" hidden>${ele.textContent}</pre>`
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (false) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js').then(runMermaidFn)
+  }
+  
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><div class="aplayer no-destroy" data-id="10045429948" data-server="netease" data-type="playlist" data-order="list"  data-fixed="true"  data-preload="auto"  data-autoplay="true"> </div><script src="/js/sakura.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const loadMeting = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'loadMeting')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+const triggerPjaxFn = (val) => {
+  if (!val) return
+  Object.values(val).forEach(fn => { fn() })
+}
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  triggerPjaxFn(window.globalFn.pjaxSend)
+})
+
+document.addEventListener('pjax:complete', () => {
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  triggerPjaxFn(window.globalFn.pjaxComplete)
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.14.0-b3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/koharu.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script>
+        <style>
+            [bg-lazy] {
+                background-image: none !important;
+                background-color: #eee !important;
+            }
+        </style>
+        <script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(r){r.imageLazyLoadSetting.processImages=t;var e=r.imageLazyLoadSetting.isSPA,n=r.imageLazyLoadSetting.preloadRatio||1,c=a();function a(){var t=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")),e=Array.prototype.slice.call(document.querySelectorAll("[bg-lazy]"));return t.concat(e)}function t(){e&&(c=a());for(var t,o=0;o<c.length;o++)0<=(t=(t=c[o]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(r.innerHeight*n||document.documentElement.clientHeight*n)&&function(){var t,e,n,a,i=c[o];e=function(){c=c.filter(function(t){return i!==t}),r.imageLazyLoadSetting.onImageLoaded&&r.imageLazyLoadSetting.onImageLoaded(i)},(t=i).hasAttribute("bg-lazy")?(t.removeAttribute("bg-lazy"),e&&e()):(n=new Image,a=t.getAttribute("data-original"),n.onload=function(){t.src=a,t.removeAttribute("data-original"),e&&e()},t.src!==a&&(n.src=a))}()}function i(){clearTimeout(t.tId),t.tId=setTimeout(t,500)}t(),document.addEventListener("scroll",i),r.addEventListener("resize",i),r.addEventListener("orientationchange",i)}(this);</script><script async>window.onload=function(){var a=document.createElement('script'),b=document.getElementsByTagName('script')[0];a.type='text/javascript',a.async=!0,a.src='/sw-register.js?v='+Date.now(),b.parentNode.insertBefore(a,b)};</script></body></html>
