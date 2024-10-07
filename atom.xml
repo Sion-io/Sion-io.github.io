@@ -6,7 +6,7 @@
   <link href="http://www.sion-io.cn/atom.xml" rel="self"/>
   
   <link href="http://www.sion-io.cn/"/>
-  <updated>2024-07-06T06:26:47.391Z</updated>
+  <updated>2024-10-06T04:39:38.483Z</updated>
   <id>http://www.sion-io.cn/</id>
   
   <author>
@@ -15,6 +15,23 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring 面试篇</title>
+    <link href="http://www.sion-io.cn/2024/10/06/Spring/"/>
+    <id>http://www.sion-io.cn/2024/10/06/Spring/</id>
+    <published>2024-10-06T04:38:22.634Z</published>
+    <updated>2024-10-06T04:39:38.483Z</updated>
+    
+    
+    
+    
+    
+    <category term="Java" scheme="http://www.sion-io.cn/tags/Java/"/>
+    
+    <category term="面试" scheme="http://www.sion-io.cn/tags/%E9%9D%A2%E8%AF%95/"/>
+    
+  </entry>
   
   <entry>
     <title>java高级</title>
