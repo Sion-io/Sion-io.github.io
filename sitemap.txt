@@ -1,9 +1,12 @@
-http://www.sion-io.cn/2024/05/11/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/
+http://www.sion-io.cn/ACG/GalGame/yzk/index.html
+http://www.sion-io.cn/ACG/GalGame/index.html
 http://www.sion-io.cn/ACG/index.html
+http://www.sion-io.cn/list/ACG/index.html
+http://www.sion-io.cn/2024/11/27/acg/galgame/%E6%A8%B1%E4%B9%8B%E8%AF%97/
 http://www.sion-io.cn/2024/11/27/acg/acg/
-http://www.sion-io.cn/2024/11/27/acg/acg-new/
+http://www.sion-io.cn/2024/05/11/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0/
 http://www.sion-io.cn/ACG/Galgaem/index.html
-http://www.sion-io.cn/ACG/GalGaem/index.html
+http://www.sion-io.cn/list/ACG/GalGame/index.html
 http://www.sion-io.cn/2024/10/06/Spring/
 http://www.sion-io.cn/2024/07/06/%E9%9D%A2%E8%AF%95%E9%A2%98/java%E9%AB%98%E7%BA%A7/
 http://www.sion-io.cn/%E9%9D%A2%E8%AF%95%E9%A2%98/123.html
@@ -13,7 +16,6 @@ http://www.sion-io.cn/music/index.html
 http://www.sion-io.cn/playlist/index.html
 http://www.sion-io.cn/link/index.html
 http://www.sion-io.cn/list/order/index.html
-http://www.sion-io.cn/list/CG/index.html
 http://www.sion-io.cn/categories/index.html
 http://www.sion-io.cn/tags/index.html
 http://www.sion-io.cn/list/movies/index.html
