@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.sion-io.cn/ACG/GalGame/yzk/index.html</loc>
+    <loc>http://www.sion-io.cn/list/ACG/GalGame/index.html</loc>
     
     <lastmod>2024-11-28</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>http://www.sion-io.cn/ACG/GalGame/index.html</loc>
+    <loc>http://www.sion-io.cn/list/ACG/GalGame/ginka/index.html</loc>
     
     <lastmod>2024-11-28</lastmod>
     
@@ -20,7 +20,16 @@
   </url>
   
   <url>
-    <loc>http://www.sion-io.cn/ACG/index.html</loc>
+    <loc>http://www.sion-io.cn/list/ACG/Animation/index.html</loc>
+    
+    <lastmod>2024-11-28</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.sion-io.cn/list/ACG/GalGame/yzk/index.html</loc>
     
     <lastmod>2024-11-28</lastmod>
     
@@ -66,15 +75,6 @@
   
   <url>
     <loc>http://www.sion-io.cn/ACG/Galgaem/index.html</loc>
-    
-    <lastmod>2024-11-27</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.sion-io.cn/list/ACG/GalGame/index.html</loc>
     
     <lastmod>2024-11-27</lastmod>
     
